@@ -31,7 +31,7 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -77,8 +77,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -115,7 +113,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -160,8 +158,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -196,7 +192,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -242,8 +238,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -278,7 +272,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -324,8 +318,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -360,7 +352,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -406,8 +398,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -440,7 +430,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -485,8 +475,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
@@ -519,7 +507,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  ,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
+  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -565,8 +553,6 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_LEADCONTACT elc
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.ID_PRIMARY_ACCOUNTLEAD = elc.ACCOUNTLEAD_ID
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
   LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
