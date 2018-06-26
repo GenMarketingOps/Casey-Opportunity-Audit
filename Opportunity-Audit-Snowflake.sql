@@ -30,6 +30,7 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -112,6 +113,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -191,6 +193,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -271,6 +274,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -351,6 +355,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -429,6 +434,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
@@ -506,6 +512,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerName
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
   --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
