@@ -21,6 +21,8 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -31,8 +33,6 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -50,9 +50,7 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
 
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -74,8 +72,8 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-  LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+  LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OppAudit_QuickFix CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -86,7 +84,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'North America'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -104,6 +102,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -114,8 +114,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -132,9 +130,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -156,8 +152,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -168,7 +164,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'EMEA'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -184,6 +180,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -194,8 +192,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -212,10 +208,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -237,8 +230,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+  LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -249,7 +242,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'LATAM'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -265,6 +258,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -275,8 +270,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -293,10 +286,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -318,8 +308,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -330,7 +320,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'APAC'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -346,6 +336,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -356,8 +348,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -374,10 +364,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -399,8 +386,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -411,7 +398,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 1
@@ -425,6 +412,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -435,8 +424,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -453,9 +440,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -477,8 +462,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -489,7 +474,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType != 'New logo'
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 1
@@ -503,6 +488,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunitySubRegion
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -513,8 +500,6 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_OpportunityOwnerRoleName
   ,dm_core_dim_opportunity_dev.dim_OpportunityName
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_DEV.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_DEV.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
-  ,eopp.CONVERTEDOPPCREATEDBYMAORLDR
-  --,elc.CONVERTEDPRIMARYCONTACTCREATEDBYMAORLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_dev.id_primary_Opportunity) AS URL
   ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
@@ -531,10 +516,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
-
-  ,CASE WHEN dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_dev.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_dev.f_Ad_17_ClaimedOpp END AS Not_Created_by_Journey_Team
-  ,dm_core_fact_opportunity_dev.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -556,8 +538,8 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
 FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
   JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_primary_Opportunity
-    LEFT JOIN MARKETINGOPERATIONS.DM_CALC.V_EXT_OPPORTUNITY eopp
-  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = eopp.ID
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_DEV.ID_PRIMARY_OPPORTUNITY = CAFix.ID
   LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev
     ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_dev.id_primary_AccountLead
   LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
@@ -568,7 +550,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-02-19'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 0
 ;
