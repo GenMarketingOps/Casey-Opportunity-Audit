@@ -22,7 +22,7 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -103,7 +103,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -181,7 +181,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -259,7 +259,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -337,7 +337,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -413,7 +413,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
@@ -489,7 +489,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_dim_opportunity_dev.dim_geo_OpportunityCountry
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
   ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_PRESALESPRIORITY
-  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_AVAYAACCOUNTTYPE
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_DEV.DIM_RELATIONSHIPCLEAN
   ,dm_core_dim_opportunity_dev.dim_OpportunityLDRName
   ,dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE
   ,dm_core_fact_opportunity_dev.date_OppClosedDate
