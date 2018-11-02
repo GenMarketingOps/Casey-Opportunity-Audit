@@ -51,6 +51,7 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev.id_primary_Oppor
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
 
   ,CAFix.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -131,6 +132,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -209,6 +211,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+    ,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -287,6 +290,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+  ,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -365,6 +369,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -441,6 +446,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
@@ -517,6 +523,7 @@ SELECT dm_core_fact_opportunity_dev.id_primary_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
   ,dm_core_fact_opportunity_dev.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_dev.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_dev.DIM_OPPORTUNITYWINLOSS
   ,dm_core_dim_opportunity_dev.dim_OpportunityBusinessType
   ,dm_core_dim_opportunity_dev.dim_PlatformType
