@@ -1,0 +1,563 @@
+UPDATE MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+
+SET
+dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1
+FROM MARKETINGOPERATIONS.REF_TABLES.rh_temp_ref_2017Q2_audit_validated
+
+
+WHERE MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.REF_TABLES.rh_temp_ref_2017Q2_audit_validated.Opp_ID
+;
+
+
+USE WAREHOUSE MARKETINGOPERATIONS;
+
+
+
+----North America
+
+SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+
+  ,CAFix.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
+  ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+--  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+--  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+--  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+  LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OppAudit_QuickFix CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'North America'
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+  AND dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency > 0.000000
+
+;
+
+
+----EMEA
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'EMEA'
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+  AND dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency > 0.000000
+;
+
+----LATAM
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+    ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+  LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'LATAM'
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+  AND dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency > 0.000000
+;
+
+----APAC
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+  ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'APAC'
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+  AND dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency > 0.000000
+;
+
+----Global New logo
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+;
+
+----Global Non-New logo
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType != 'New logo'
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 1
+;
+
+----Global Not Valid for Reporting
+
+SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.DIM_STATEPROVINCE
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubSubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunitySubRegion
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityCountry
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_GEO_ACCOUNTSUBREGION AS TableauSubRegion
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_PRESALESPRIORITY
+  ,MARKETINGOPERATIONS.DM_CORE.DM_CORE_DIM_ACCOUNTLEAD_PROD.DIM_RELATIONSHIPCLEAN
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityLDRName
+  ,dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE
+  ,dm_core_fact_opportunity_PROD.date_OppClosedDate
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityNumberofAgents
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerSegment AS TableauOpportunityOwnerSegment
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityOwnerRoleName
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityName
+  ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
+  ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
+  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
+    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
+                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
+                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
+                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
+                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
+                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
+                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
+  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+  ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
+,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
+  ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
+  ,dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType
+  ,dm_core_dim_opportunity_PROD.dim_PlatformType
+  ,dm_core_dim_opportunity_PROD.dim_OfferingsType
+  ,dm_core_fact_opportunity_PROD.date_OppPipelineAddedDate
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseEquivalency
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppLicenseAmount
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppACV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTCV
+  ,dm_core_fact_opportunity_PROD.m_AmountOfConvertedOppTermACV
+  ,dm_core_dim_accountlead_PROD.dim_AccountName
+  ,dm_core_fact_opportunity_PROD.id_Account
+  ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_Account) AS ACCOUNT_URL
+  ,dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion
+
+----  ,dm_core_fact_opportunity_PROD.m_IsPipelineValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsBookingValidation
+----  ,dm_core_fact_opportunity_PROD.m_IsValidForReporting
+FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
+  JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_primary_Opportunity
+    LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_OPPAUDIT_QUICKFIX CAFix
+  ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = CAFix.ID
+  LEFT JOIN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_AccountLead = MARKETINGOPERATIONS.DM_CORE.dm_core_dim_accountlead_PROD.id_primary_AccountLead
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.OPPORTUNITY
+    ON MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Opportunity = MARKETINGOPERATIONS.SFDC.OPPORTUNITY.Id
+  LEFT JOIN MARKETINGOPERATIONS.SFDC.USER as OppJER
+    ON MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C = OppJER.Id
+  LEFT JOIN MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE
+    ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
+    THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
+       ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
+  AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 0
+;
