@@ -35,15 +35,10 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Oppo
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -85,6 +80,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'North America'
@@ -117,15 +114,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -166,6 +158,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'EMEA'
@@ -196,15 +190,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -245,6 +234,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'LATAM'
@@ -275,15 +266,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -324,6 +310,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_geo_OpportunityRegion = 'APAC'
@@ -354,15 +342,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+        ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -403,6 +386,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType = 'New logo'
@@ -431,15 +416,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -480,6 +460,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_PROD.dim_OpportunityBusinessType != 'New logo'
@@ -508,15 +490,10 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_f_IsAuditIssueAccepted = 1 THEN 0
-    ELSE GREATEST(dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary
-                  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue
-                  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign
-                  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR
-                  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner
-                  ,dm_core_fact_opportunity_PROD.f_Ad_09_LDROwned
-                  ,CASE WHEN dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE dm_core_fact_opportunity_PROD.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE( CASE
+            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
   ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
   ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
   ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
@@ -557,6 +534,8 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
+LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
+ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
   AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 0
