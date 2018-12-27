@@ -35,15 +35,19 @@ SELECT MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_PROD.id_primary_Oppo
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
 
   ,CAFix.f_Ad_f_IsAuditIssueAccepted AS Exception_Accepted
   ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
@@ -114,15 +118,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
 ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -190,15 +198,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
     ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -266,15 +278,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
   ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -342,15 +358,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-        ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
 ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -416,15 +436,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
 ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -490,15 +514,19 @@ SELECT dm_core_fact_opportunity_PROD.id_primary_Opportunity
   ,CASE WHEN DM_CORE_DIM_OPPORTUNITY_PROD.F_ISMARKETINGSOURCED = 1 and DM_CORE_DIM_OPPORTUNITY_PROD.ID_OPPORTUNITYCREATEDBYPROFILE_ID NOT IN ('00eU0000000dJjWIAU','00eU0000000ZxdmIAC') THEN 1 ELSE 0 END AS MktgSourcedNotCreatedByLDR
   ,MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYSTAGE_NAME
   ,CONCAT('https://genesys.my.salesforce.com/',dm_core_fact_opportunity_PROD.id_primary_Opportunity) AS URL
-  ,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
-    ELSE( CASE
-            WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
-                              AND dm_core_dim_opportunity_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp  END) END AS INVALID_OPP_NEW
-  ,dm_core_fact_opportunity_PROD.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
-  ,dm_core_fact_opportunity_PROD.f_Ad_02_BANTIssue AS BANT_Issue
-  ,dm_core_fact_opportunity_PROD.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
-  ,dm_core_fact_opportunity_PROD.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
-  ,dm_core_fact_opportunity_PROD.f_Ad_08_BadOwner AS NonSales_Owner
+,CASE WHEN CAFix.F_AD_F_ISAUDITISSUEACCEPTED = 1 THEN 0
+    ELSE GREATEST(invalidopp.f_Ad_01_MissingPrimary
+                  ,invalidopp.f_Ad_03_LDRnoCampaign
+                  ,invalidopp.f_Ad_04_CampaignnoLDR
+                  ,invalidopp.f_Ad_08_BadOwner
+                  ,invalidopp.f_Ad_09_LDROwned
+                  ,CASE WHEN invalidopp.f_Ad_17_ClaimedOpp = 1
+                              AND DM_CORE_DIM_OPPORTUNITY_PROD.dim_OpportunityCreatedByName LIKE '%Integration%' THEN 0 ELSE invalidopp.f_Ad_17_ClaimedOpp END) END AS INVALID_OPP
+  ,invalidopp.f_Ad_01_MissingPrimary AS Missing_Primary_Contact
+  , --,invalidopp.f_Ad_02_BANTIssue AS BANT_Issue
+  invalidopp.f_Ad_03_LDRnoCampaign AS No_Campaign_Source
+  ,invalidopp.f_Ad_04_CampaignnoLDR AS No_Journey_Team_on_Opportunity
+  ,invalidopp.f_Ad_08_BadOwner AS NonSales_Owner
   ,CAFix.F_AD_F_ISAUDITISSUEACCEPTED AS Exception_Accepted
 ,dm_core_fact_opportunity_PROD.ISNEWLOGOEXEMPTION
   ,dm_core_dim_opportunity_PROD.DIM_OPPORTUNITYWINLOSS
@@ -538,5 +566,5 @@ LEFT JOIN MARKETINGOPERATIONS.TEMP_TABLES.CA_INVALIDOPPFLAGFIX_Keep invalidopp
 ON MARKETINGOPERATIONS.DM_CORE.DM_CORE_FACT_OPPORTUNITY_PROD.ID_PRIMARY_OPPORTUNITY = invalidopp.ID
 WHERE dm_core_fact_opportunity_PROD.DATE_OPPCREATED_DATE >= '2018-01-01'
   AND dm_core_fact_opportunity_PROD.m_IsMarketingSourced = 1
-  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 0
-;
+  AND dm_core_fact_opportunity_PROD.m_IsValidForReporting = 0;
+
