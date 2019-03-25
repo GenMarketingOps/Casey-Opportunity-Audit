@@ -85,7 +85,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'North America'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -166,7 +166,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'EMEA'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -245,7 +245,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'LATAM'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -324,7 +324,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_geo_OpportunityRegion = 'APAC'
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
@@ -403,7 +403,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType = 'New logo'
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 1
@@ -480,7 +480,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.Id
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_dim_opportunity_dev.dim_OpportunityBusinessType != 'New logo'
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 1
@@ -557,7 +557,7 @@ FROM MARKETINGOPERATIONS.DM_CORE.dm_core_fact_opportunity_dev
     ON CASE WHEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR IS NOT NULL
     THEN MARKETINGOPERATIONS.DM_CORE.dm_core_dim_opportunity_dev.id_OpportunityLDR
        ELSE MARKETINGOPERATIONS.SFDC.OPPORTUNITY.JOURNEY_ENGAGEMENT_REP_C END = MARKETINGOPERATIONS.REF_TABLES.ML_DM_REF_USERTYPE.ID
-WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2018-01-01'
+WHERE dm_core_fact_opportunity_dev.DATE_OPPCREATED_DATE >= '2019-01-01'
   AND dm_core_fact_opportunity_dev.m_IsMarketingSourced = 1
   AND dm_core_fact_opportunity_dev.m_IsValidForReporting = 0
 ;
